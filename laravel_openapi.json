@@ -3,50 +3,67 @@
   "info": {
     "title": "Laravel Currency API",
     "version": "1.0.0",
-    "description": "API для управління базою валют на базі фреймворку Laravel."
+    "description": "Currency CRUD API built with Laravel"
   },
   "servers": [
     {
       "url": "http://127.0.0.1:8000/api",
-      "description": "Локальний сервер Laravel"
+      "description": "Laravel API server"
     }
   ],
   "paths": {
     "/currencies": {
       "get": {
-        "summary": "Отримати всі валюти",
-        "operationId": "listCurrencies",
+        "summary": "Get all currencies",
         "responses": {
           "200": {
-            "description": "Список валют успішно отримано.",
+            "description": "List of currencies",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Currency" }
-                }
+                  "items": {
+                    "$ref": "#/components/schemas/Currency"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "code": "USD",
+                    "name": "US Dollar",
+                    "rate": 1.0
+                  }
+                ]
               }
             }
           }
         }
       },
       "post": {
-        "summary": "Створити нову валюту",
-        "operationId": "createCurrency",
+        "summary": "Create currency",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CurrencyRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CurrencyRequest"
+              },
+              "example": {
+                "code": "EUR",
+                "name": "Euro",
+                "rate": 0.92
+              }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Валюту успішно створено.",
+            "description": "Currency created",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Currency" }
+                "schema": {
+                  "$ref": "#/components/schemas/Currency"
+                }
               }
             }
           }
@@ -54,52 +71,91 @@
       }
     },
     "/currencies/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "description": "Унікальний ID валюти",
-          "schema": { "type": "integer" }
-        }
-      ],
       "get": {
-        "summary": "Отримати валюту за ID",
-        "operationId": "getCurrency",
+        "summary": "Get currency by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Валюту знайдено.",
+            "description": "Currency found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Currency" }
+                "schema": {
+                  "$ref": "#/components/schemas/Currency"
+                }
               }
             }
           },
-          "404": { "description": "Валюту не знайдено" }
+          "404": {
+            "description": "Currency not found"
+          }
         }
       },
       "patch": {
-        "summary": "Оновити валюту",
-        "operationId": "updateCurrency",
+        "summary": "Update currency",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CurrencyRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CurrencyRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Валюту успішно оновлено." },
-          "404": { "description": "Валюту не знайдено" }
+          "200": {
+            "description": "Currency updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Currency"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Currency not found"
+          }
         }
       },
       "delete": {
-        "summary": "Видалити валюту",
-        "operationId": "deleteCurrency",
+        "summary": "Delete currency",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
-          "204": { "description": "Валюту успішно видалено." },
-          "404": { "description": "Валюту не знайдено" }
+          "204": {
+            "description": "Currency deleted"
+          },
+          "404": {
+            "description": "Currency not found"
+          }
         }
       }
     }
@@ -109,19 +165,48 @@
       "Currency": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "readOnly": true, "example": 1 },
-          "code": { "type": "string", "example": "USD" },
-          "name": { "type": "string", "example": "US Dollar" },
-          "rate": { "type": "number", "format": "float", "example": 40.5 }
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "example": 1
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "USD"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "US Dollar"
+          },
+          "rate": {
+            "type": "number",
+            "format": "float",
+            "example": 1.0
+          }
         }
       },
       "CurrencyRequest": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "example": "EUR" },
-          "name": { "type": "string", "example": "Euro" },
-          "rate": { "type": "number", "format": "float", "example": 42.1 }
-        }
+          "code": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "USD"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "US Dollar"
+          },
+          "rate": {
+            "type": "number",
+            "format": "float",
+            "example": 1.0
+          }
+        },
+        "required": ["code", "name", "rate"]
       }
     }
   }
