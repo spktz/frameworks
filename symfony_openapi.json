@@ -1,0 +1,128 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Symfony Currency API",
+    "version": "1.0.0",
+    "description": "API для управління базою валют на базі фреймворку Symfony."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000/api",
+      "description": "Локальний сервер Symfony"
+    }
+  ],
+  "paths": {
+    "/currencies": {
+      "get": {
+        "summary": "Отримати всі валюти",
+        "operationId": "listCurrencies",
+        "responses": {
+          "200": {
+            "description": "Список валют успішно отримано.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Currency" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Створити нову валюту",
+        "operationId": "createCurrency",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CurrencyRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Валюту успішно створено.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Currency" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/currencies/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Унікальний ID валюти",
+          "schema": { "type": "integer" }
+        }
+      ],
+      "get": {
+        "summary": "Отримати валюту за ID",
+        "operationId": "getCurrency",
+        "responses": {
+          "200": {
+            "description": "Валюту знайдено.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Currency" }
+              }
+            }
+          },
+          "404": { "description": "Валюту не знайдено" }
+        }
+      },
+      "patch": {
+        "summary": "Оновити валюту",
+        "operationId": "updateCurrency",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CurrencyRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Валюту успішно оновлено." },
+          "404": { "description": "Валюту не знайдено" }
+        }
+      },
+      "delete": {
+        "summary": "Видалити валюту",
+        "operationId": "deleteCurrency",
+        "responses": {
+          "204": { "description": "Валюту успішно видалено." },
+          "404": { "description": "Валюту не знайдено" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Currency": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "readOnly": true, "example": 1 },
+          "code": { "type": "string", "example": "USD" },
+          "name": { "type": "string", "example": "US Dollar" },
+          "rate": { "type": "number", "format": "float", "example": 40.5 }
+        }
+      },
+      "CurrencyRequest": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "example": "EUR" },
+          "name": { "type": "string", "example": "Euro" },
+          "rate": { "type": "number", "format": "float", "example": 42.1 }
+        }
+      }
+    }
+  }
+}
